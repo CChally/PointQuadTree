@@ -85,11 +85,13 @@ namespace PointQuadTree
     {
         private Point p; // Point 
         private Node[] quadrants; // Node References
-        public Node(int dim)
-        {
-            p = new Point(dim); // Create zero node
-            quadrants = new Node[dim*dim]; // For the n-th dimension, n^2 node child references are needed
 
+        // Constructor
+        // Creates a Node given a dimension and point
+        public Node(int dim, Point p)
+        {
+            this.p = p; // Assign Point to Node
+            quadrants = new Node[dim*dim]; // For the n-th dimension, n^2 node child references are needed
         }
     }
 
@@ -107,9 +109,21 @@ namespace PointQuadTree
             root = null; // Initially empty quadtree
             this.dimension = dim; // Init with number of dimensions
         }
-        public void Insert()
+        // Insert
+        // 
+        public void Insert(Point p)
         {
-
+            if (p.getDim() != dimension) { throw new ArgumentException($"Invalid dimensions! Point {p.ToString()} is not {dimension}-D"); }  // Invalid Point Dimensions
+            root = Insert(p, root);
+        }
+        private Node Insert(Point p, Node root)
+        {
+            if (root == null) { return new Node(dimension, p); } // Base case : Null
+            else
+            {
+                Console.WriteLine("Valid dimensions!");
+            }
+            return root;
         }
     }
 }
