@@ -7,5 +7,4 @@ using System.Threading.Tasks;
 namespace Driver
 {
     using PointQuadTree;
-
 }
