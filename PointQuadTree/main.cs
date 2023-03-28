@@ -14,9 +14,9 @@ namespace Driver
             PointQuadTree PQ = new PointQuadTree(2); // Init with 2D
             var PointSet = new Point[10]; // Set of Points
 
-            Point p = new Point(3);
+            Point p = new Point(3); // Wrong dimension
 
-            PQ.Insert(p);
+            PQ.Insert(p); // ArgumentException Thrown
 
 
         }
