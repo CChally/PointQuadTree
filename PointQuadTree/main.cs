@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,6 +34,11 @@ namespace Driver
 
             // Test Euclid Distance
             Console.WriteLine(p.distanceTo(d));
+
+            // Test dim
+            Console.WriteLine(p.getDim());
+
+            Console.WriteLine(p.Get(1));
         }
     }
 }
