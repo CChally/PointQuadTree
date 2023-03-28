@@ -42,7 +42,7 @@
 
             for (int i = 0; i < getDim(); i++) // For each dimension
             {
-                distance += Math.Pow(this.coord[i] - other.coord[i], 2);
+                distance += Math.Pow(other.coord[i] - this.coord[i], 2);
             }
             return (float)Math.Sqrt(distance);
         }
@@ -67,14 +67,23 @@
         // Converts the point to a string
         public override string ToString()
         {
-            string pointString = ""; // Empty string
+            string pointString = "( "; // Empty string
 
             for (int i = 0; i < getDim(); i++) // For each dimension, concatenate the dimension value to the return string
             {
-                pointString += coord[i];
+                pointString += coord[i]+ " ";
             }
+            pointString += ")";
             return pointString;
         }
 
+    }
+    // Node Class
+    public class Node
+    {
+        public Node()
+        {
+
+        }
     }
 }
