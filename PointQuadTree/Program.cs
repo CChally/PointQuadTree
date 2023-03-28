@@ -83,12 +83,12 @@ namespace PointQuadTree
     // Represents a node in a QuadTree
     public class Node
     {
-        private Point p; // Point
-        private Point[] quadrants; // Point References
+        private Point p; // Point 
+        private Node[] quadrants; // Node References
         public Node(int dim)
         {
             p = new Point(dim); // Create zero node
-            quadrants = new Point[dim*dim]; // For the n-th dimension, n^2 node child references are needed
+            quadrants = new Node[dim*dim]; // For the n-th dimension, n^2 node child references are needed
 
         }
     }
