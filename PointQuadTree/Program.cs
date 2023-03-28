@@ -1,4 +1,4 @@
-﻿namespace PointQuadTree
+namespace PointQuadTree
 {
     // Point Class
     // Represents a point in the n-th dimension
@@ -78,10 +78,36 @@
         }
 
     }
+
     // Node Class
+    // Represents a node in a QuadTree
     public class Node
     {
-        public Node()
+        private Point p; // Point
+        private Point[] quadrants; // Point References
+        public Node(int dim)
+        {
+            p = new Point(dim); // Create zero node
+            quadrants = new Point[dim*dim]; // For the n-th dimension, n^2 node child references are needed
+
+        }
+    }
+
+    // QuadTree Class
+    // Represents a Point Quadtree in n-th dimensional space
+    public class PointQuadTree
+    {
+        private Node root { get; set; } // Root Reference
+        private int dimension { get; set; } // Number of Dimensions
+
+        // Constructor
+        // Creates an initially empty quadtree of the specified dimension
+        public PointQuadTree(int dim)
+        {
+            root = null; // Initially empty quadtree
+            this.dimension = dim; // Init with number of dimensions
+        }
+        public void Insert()
         {
 
         }
