@@ -1,3 +1,4 @@
+
 namespace PointQuadTree
 {
     // Point Class
@@ -83,15 +84,15 @@ namespace PointQuadTree
     // Represents a node in a QuadTree
     public class Node
     {
-        private Point p; // Point 
-        private Node[] quadrants; // Node References
+        public Point p { get; set; } // Point 
+        public Node[] quadrants; // Node References
 
         // Constructor
         // Creates a Node given a dimension and point
         public Node(int dim, Point p)
         {
             this.p = p; // Assign Point to Node
-            quadrants = new Node[dim*dim]; // For the n-th dimension, n^2 node child references are needed
+            quadrants = new Node[(int)Math.Pow(2,dim)]; // For the n-th dimension, the number children pointers = 2^dim
         }
     }
 
@@ -99,8 +100,8 @@ namespace PointQuadTree
     // Represents a Point Quadtree in n-th dimensional space
     public class PointQuadTree
     {
-        private Node root { get; set; } // Root Reference
-        private int dimension { get; set; } // Number of Dimensions
+        private Node root; // Root Reference
+        public int dimension; // Number of Dimensions, public so Main can have access when constructing points.
 
         // Constructor
         // Creates an initially empty quadtree of the specified dimension
@@ -109,21 +110,54 @@ namespace PointQuadTree
             root = null; // Initially empty quadtree
             this.dimension = dim; // Init with number of dimensions
         }
+
         // Insert
         // 
-        public void Insert(Point p)
+        public bool Insert(Point p)
         {
             if (p.getDim() != dimension) { throw new ArgumentException($"Invalid dimensions! Point {p.ToString()} is not {dimension}-D"); }  // Invalid Point Dimensions
-            root = Insert(p, root);
+            return Insert(ref root, p);
         }
-        private Node Insert(Point p, Node root)
+        private bool Insert(ref Node node, Point point)
         {
-            if (root == null) { return new Node(dimension, p); } // Base case : Null
-            else
+            if(node == null) // hits leaf node
             {
-                Console.WriteLine("Valid dimensions!");
+                node = new Node(dimension, point); // create node with point
+                return true;
             }
-            return root;
+            else // traverse
+            {
+                if (!node.p.Equals(point)) // Not a duplicate
+                {
+                    int quadrantIndex = 0;
+
+                    for (int i = 0; i < dimension; i++) // Compare each dimension
+                    {
+                        if (point.Get(i) > node.p.Get(i)) // Point coord is greater
+                        {
+                            quadrantIndex += (int)Math.Pow(2, i); // Get quadrant index 
+                        }
+                        // Continue with quadrantIndex, no modification
+                    }
+                    return Insert(ref node.quadrants[quadrantIndex], point); // Select quadrant
+                }
+                else { return false; } // duplicate point
+            }
+        }
+        
+        // Public Print
+        public void PrintQuadTree()
+        {
+            PrintQuadTree(root, 0);
+        }
+
+        // Private Recursive Print
+        private void PrintQuadTree(Node root, int n)
+        {
+            if (root != null)
+            {
+               
+            }
         }
     }
 }
