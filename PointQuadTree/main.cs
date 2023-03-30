@@ -22,11 +22,9 @@ namespace Driver
             {
                 p = new Point(2);           // Zero Point
 
-                for (int j = 0; j < PQ.dimension; j++)  // Assign values to zero point
-                {
+                for (int j = 0; j < PQ.dimension; j++)  // Assign values to zero poiny
                     p.Set(j, rand.Next(-50, 50));   // Lower bound of -50, upper bound of 50, for each dimension
-                }
-
+                
                 // Insert into PointQuad
                 PQ.Insert(p);   
             }
