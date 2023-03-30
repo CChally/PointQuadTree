@@ -8,7 +8,7 @@ namespace Driver
 {
     using PointQuadTree;
 
-    class Driver
+    class Program
     {
         static void Main()
         {
