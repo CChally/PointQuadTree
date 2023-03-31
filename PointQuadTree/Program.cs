@@ -1,4 +1,8 @@
 
+using System.Drawing;
+using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography;
+
 namespace PointQuadTree
 {
     // Point Class
@@ -12,6 +16,14 @@ namespace PointQuadTree
         public Point(int dim)
         {
             coord = new float[dim]; // Create array to store 
+            /* For 2D: (Can be generalized for any dimension)
+
+              coord[0] -> SW
+              coord[1] -> SE
+              coord[2] -> NW
+              coord[3] -> NE
+
+             */
         }
 
         // getDim
@@ -37,6 +49,7 @@ namespace PointQuadTree
 
         // distanceTo
         // Returns the Euclidean distance between two points in the nth-dimensions
+        // Absolute value
         public float distanceTo(Point other)
         {
             double distance = 0;
@@ -72,7 +85,7 @@ namespace PointQuadTree
 
             for (int i = 0; i < getDim(); i++) // For each dimension, concatenate the dimension value to the return string
             {
-                pointString += coord[i]+ " ";
+                pointString += coord[i] + " ";
             }
             pointString += ")";
             return pointString;
@@ -92,7 +105,7 @@ namespace PointQuadTree
         public Node(int dim, Point p)
         {
             this.p = p; // Assign Point to Node
-            quadrants = new Node[(int)Math.Pow(2,dim)]; // For the n-th dimension, the number children pointers = 2^dim
+            quadrants = new Node[(int)Math.Pow(2, dim)]; // For the n-th dimension, the number children pointers = 2^dim
         }
     }
 
@@ -115,14 +128,18 @@ namespace PointQuadTree
         // 
         public bool Insert(Point p)
         {
-            if (p.getDim() != dimension) { throw new ArgumentException($"Invalid dimensions! Point {p.ToString()} is not {dimension}-D"); }  // Invalid Point Dimensions
+            // Invalid Point Dimensions Check
+            if (p.getDim() != dimension)
+                throw new ArgumentException($"Invalid dimensions! Point {p.ToString()} is not {dimension}-D");
+
+            // Valid dimension
             return Insert(ref root, p);
         }
         private bool Insert(ref Node node, Point point)
         {
-            if(node == null) // hits leaf node
+            if (node == null) // Hits leaf node
             {
-                node = new Node(dimension, point); // create node with point
+                node = new Node(dimension, point); // Create node with point
                 return true;
             }
             else // traverse
@@ -134,29 +151,91 @@ namespace PointQuadTree
                     for (int i = 0; i < dimension; i++) // Compare each dimension
                     {
                         if (point.Get(i) > node.p.Get(i)) // Point coord is greater
-                        {
                             quadrantIndex += (int)Math.Pow(2, i); // Get quadrant index 
-                        }
+
                         // Continue with quadrantIndex, no modification
                     }
                     return Insert(ref node.quadrants[quadrantIndex], point); // Select quadrant
                 }
-                else { return false; } // duplicate point
+                else { return false; } // Duplicate point
             }
         }
-        
+        // public Delete
+        public bool Delete(Point p)
+        {
+            if (p.getDim() != dimension)
+                throw new ArgumentException($"Invalid dimensions! Point {p.ToString()} is not {dimension}-D");
+
+            return Delete(ref root, p);
+        }
+        // Private Recursive Delete
+        private bool Delete(ref Node node, Point p)
+        {
+            return true;
+        }
+
+        // Public Contains
+        public bool Contains(Point p)
+        {
+            // Invalid Point Dimensions Check
+            if (p.getDim() != dimension)
+                throw new ArgumentException($"Invalid dimensions! Point {p.ToString()} is not {dimension}-D");
+
+            // Valid Dimension
+            return Contains(ref root, p);
+        }
+
+        // Private Recursive Contains
+        private bool Contains(ref Node node, Point point)
+        {
+            if (node == null) return false; // Ran off tree
+            else
+            {
+                if (node.p.Equals(point)) return true; // Point found in current node
+                else // Traverse
+                {
+                    int quadrantIndex = 0;
+                    for (int i = 0; i < dimension; i++) // Compare each dimension
+                    {
+                        if (point.Get(i) > node.p.Get(i)) // Point coord is greater
+                            quadrantIndex += (int)Math.Pow(2, i); // Get quadrant index 
+                    }
+                    return Contains(ref node.quadrants[quadrantIndex], point);
+                }
+            }
+        }
+
         // Public Print
         public void PrintQuadTree()
         {
-            PrintQuadTree(root, 0);
+            if (root == null) // Empty tree
+                Console.WriteLine("Empty tree.");
+            else
+                PrintQuadTree(root, 0); // Print tree recursively from root
         }
 
         // Private Recursive Print
-        private void PrintQuadTree(Node root, int n)
+        // Prints the Quadtree in Reverse Inorder with indenting for spaces. The output is a tree tilted to the left 90 degrees.
+        private void PrintQuadTree(Node node, int indent)
         {
-            if (root != null)
+            if (node != null) // Base
             {
-               
+                Console.ForegroundColor = ConsoleColor.Red;
+                // Traverse Right Subtree
+                for (int i = node.quadrants.Length - 1; i >= (node.quadrants.Length / 2); i--)
+                {
+                    PrintQuadTree(node.quadrants[i], indent + 15);
+                }
+
+                // Print Inorder
+                Console.WriteLine("".PadLeft(indent) + node.p.ToString());
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                // Traverse Left Subtree
+                for (int j = 0; j < (node.quadrants.Length / 2); j++)
+                {
+                    PrintQuadTree(node.quadrants[j], indent + 15);
+                }
             }
         }
     }
