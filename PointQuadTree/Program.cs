@@ -1,9 +1,4 @@
 
-using System.Drawing;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Cryptography;
-using System.Xml.XPath;
-
 namespace PointQuadTree
 {
     // Point Class
