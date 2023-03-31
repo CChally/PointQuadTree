@@ -12,15 +12,16 @@ namespace Driver
     {
         static void Main()
         {
-            PointQuadTree PQ = new PointQuadTree(2);    // Init with specified dimension (1D, 2D, 3D ... ND)
+            PointQuadTree PQ = new PointQuadTree(3);    // Init with specified dimension (1D, 2D, 3D ... ND)
             Point p;
             Random rand = new Random();     // For generating random point values
 
-            // Create 15 random points
+           
+            // Create 10 random points
 
-            for (int i = 0; i < 15; i++)   
+            for (int i = 0; i < 10; i++)   
             {
-                p = new Point(2);           // Zero Point
+                p = new Point(3);           // Zero Point
 
                 for (int j = 0; j < PQ.dimension; j++)  // Assign values to zero point
                 {
