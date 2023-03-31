@@ -8,7 +8,7 @@ namespace Driver
 {
     using PointQuadTree;
 
-    class Program
+    class Driver
     {
         static void Main()
         {
@@ -23,12 +23,14 @@ namespace Driver
                 p = new Point(2);           // Zero Point
 
                 for (int j = 0; j < PQ.dimension; j++)  // Assign values to zero point
-                    p.Set(j, rand.Next(-50, 50));   // Lower bound of -50, upper bound of 50, for each dimension
-                
+                {
+                    p.Set(j, rand.Next(-50,50));   // Lower bound 0, upper bound of 100
+                }
+
                 // Insert into PointQuad
                 PQ.Insert(p);   
             }
-
+          
             PQ.PrintQuadTree();
             Console.ReadKey();
         }
