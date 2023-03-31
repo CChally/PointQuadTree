@@ -81,12 +81,13 @@ namespace PointQuadTree
         // Converts the point to a string
         public override string ToString()
         {
-            string pointString = "( "; // Empty string
+            string pointString = "("; // Empty string
 
             for (int i = 0; i < getDim(); i++) // For each dimension, concatenate the dimension value to the return string
             {
-                pointString += coord[i] + " ";
+                pointString += coord[i].ToString().PadLeft(3) + " ";
             }
+            pointString = pointString.Substring(0, pointString.Length - 1);
             pointString += ")";
             return pointString;
         }
