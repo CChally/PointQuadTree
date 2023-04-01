@@ -1,4 +1,6 @@
 
+using System.ComponentModel.DataAnnotations;
+
 namespace PointQuadTree
 {
     // Point Class
@@ -157,7 +159,7 @@ namespace PointQuadTree
             }
         }
 
-        // public Delete
+        // Public Delete
         public bool Delete(Point p)
         {
             if (p.getDim() != dimension)
@@ -165,11 +167,89 @@ namespace PointQuadTree
 
             return Delete(ref root, p);
         }
+
         // Private Recursive Delete
-        private bool Delete(ref Node node, Point p)
+        private bool Delete(ref Node node, Point point)
         {
-            return true;
+            if (node == null) // Node Does Not Exist
+                return false;
+
+            else if(node.p.Equals(point)) // Node Found
+            {
+                bool hasChildren = false; // Test for children
+
+                // node.quadrants.Length == Math.Pow(2,dimension)
+
+                for (int i = 0; i < Math.Pow(2, dimension); i++) // Check Each Child
+                {
+                    // Determine if leaf node
+                    if (node.quadrants[i] != null)
+                    {
+                        hasChildren = true; // Child found
+                        break;
+                    }
+                }
+                if (hasChildren) // Internal Node
+                {
+                    for (int i = (int)Math.Pow(2, dimension) - 1; i >= 0; i--) // Look at children
+                    {
+                        if (node.quadrants[i] != null) // If a child exists at the current index
+                        {
+                           
+                        }
+                    }
+                    return false;
+                }
+                else // Leaf Node
+                {
+                    node = null; // Snip Node
+                    return true;
+                }
+            }
+            else // Traverse
+            {
+                int quadrantIndex = 0;
+                for (int i = 0; i < dimension; i++) // Compare Each Dimension
+                {
+                    if (point.Get(i) > node.p.Get(i)) // Point Coord is Greater
+                        quadrantIndex += (int)Math.Pow(2, i); // Get Quadrant Index 
+
+                    // Continue with quadrantIndex, no modification
+                }
+                return Delete(ref node.quadrants[quadrantIndex], point); // Select Quadrant
+            }     
         }
+
+        // Returns inorder successor/predeccesor point
+        private Point findMin(ref Node node, int cameFrom)
+        {
+            if (node == null) return null;
+            else
+            {
+                int oppositeIndex; // Opposite of the quadrant/octant it came from
+                if (cameFrom < Math.Pow(2, dimension)) // Left half of indices
+                {
+                    oppositeIndex = (int)(Math.Pow(2, dimension) - 1) - cameFrom;
+                }
+
+                else // Right half of indicies
+                {
+                    oppositeIndex = (int)(Math.Pow(2, dimension) - 1) - (cameFrom - (int)Math.Pow(2, dimension));
+                }
+
+                if (node.quadrants[oppositeIndex] != null)
+                {
+                    while (node.quadrants[oppositeIndex] != null) // Traverse to minpoint
+                    {
+                        node = node.quadrants[oppositeIndex];
+                    }
+                    return node.p; // return min inorder point
+                }
+                return null;
+            }
+
+        }
+        
 
         // Public Contains
         public bool Contains(Point p)
@@ -223,10 +303,10 @@ namespace PointQuadTree
                     PrintQuadTree(node.quadrants[i], indent + 15,i);
                 }
 
-                if(wheredid >= (Math.Pow(2, dimension) / 2)) // Print Northern Color -> Green
+                if(wheredid >= (Math.Pow(2, dimension) / 2)) // Right subtree color
                     Console.ForegroundColor = ConsoleColor.Green;
 
-                else // Print Southern Color -> Red
+                else // Left subtree color
                     Console.ForegroundColor = ConsoleColor.Red;
                 
                 // Print Inorder
