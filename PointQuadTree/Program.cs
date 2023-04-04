@@ -169,36 +169,33 @@ namespace PointQuadTree
         // Private Recursive Delete
         private bool Delete(ref Node node, Point point)
         {
-            if (node == null) // Node Does Not Exist
+            if (node == null) // Check if node exists
                 return false;
 
-            else if(node.p.Equals(point)) // Node Found
+            else if (node.p.Equals(point)) // Node found
             {
-                bool hasChildren = false; // Test for children
+                bool hasChildren = false;
 
                 // node.quadrants.Length == Math.Pow(2,dimension)
 
-                for (int i = 0; i < Math.Pow(2, dimension); i++) // Check Each Child
+                for (int i = 0; i < Math.Pow(2, dimension); i++) // For each child
                 {
                     // Determine if leaf node
-                    if (node.quadrants[i] != null)
+                    if (node.quadrants[i] != null) // Test for first existence of a child
                     {
-                        hasChildren = true; // Child found
+                        hasChildren = true;
                         break;
                     }
                 }
-                if (hasChildren) // Internal Node
+                if (hasChildren) // Internal node
                 {
-                    for (int i = (int)Math.Pow(2, dimension) - 1; i >= 0; i--) // Look at children
+                    for (int i = (int)Math.Pow(2, dimension) - 1; i >= 0; i--) // For each child to the deleting node
                     {
-                        if (node.quadrants[i] != null) // If a child exists at the current index
-                        {
-                           
-                        }
+
                     }
-                    return false;
+                    return false; // Doesnt have children?
                 }
-                else // Leaf Node
+                else // Leaf Node (No Children)
                 {
                     node = null; // Snip Node
                     return true;
@@ -217,37 +214,6 @@ namespace PointQuadTree
                 return Delete(ref node.quadrants[quadrantIndex], point); // Select Quadrant
             }     
         }
-
-        // Returns inorder successor/predeccesor point
-        private Point findMin(ref Node node, int cameFrom)
-        {
-            if (node == null) return null;
-            else
-            {
-                int oppositeIndex; // Opposite of the quadrant/octant it came from
-                if (cameFrom < Math.Pow(2, dimension)) // Left half of indices
-                {
-                    oppositeIndex = (int)(Math.Pow(2, dimension) - 1) - cameFrom;
-                }
-
-                else // Right half of indicies
-                {
-                    oppositeIndex = (int)(Math.Pow(2, dimension) - 1) - (cameFrom - (int)Math.Pow(2, dimension));
-                }
-
-                if (node.quadrants[oppositeIndex] != null)
-                {
-                    while (node.quadrants[oppositeIndex] != null) // Traverse to minpoint
-                    {
-                        node = node.quadrants[oppositeIndex];
-                    }
-                    return node.p; // return min inorder point
-                }
-                return null;
-            }
-
-        }
-        
 
         // Public Contains
         public bool Contains(Point p)
