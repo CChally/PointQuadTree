@@ -52,12 +52,16 @@ namespace Driver
             Console.WriteLine("----------------------------------------------------------------------");
             Console.WriteLine();
             Console.WriteLine();
+            Console.WriteLine(PQ.Contains(p));
+            Console.WriteLine(PQ.Contains(d));
 
-            PQ.Delete(delete);
             PQ.Delete(p);
             PQ.Delete(d);
+            PQ.Delete(delete);
 
             PQ.PrintQuadTree();
+            Console.WriteLine(PQ.Contains(p));
+            Console.WriteLine(PQ.Contains(d));
 
             Console.ReadKey();
         }
