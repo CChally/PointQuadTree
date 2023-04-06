@@ -176,24 +176,49 @@ namespace PointQuadTree
             {
                 bool hasChildren = false;
 
-                // node.quadrants.Length == Math.Pow(2,dimension)
-
-                for (int i = 0; i < Math.Pow(2, dimension); i++) // For each child
+                // Determine if the found node is an internal node, or a leaf node
+                for (int i = 0; i < Math.Pow(2, dimension); i++)
                 {
                     // Determine if leaf node
-                    if (node.quadrants[i] != null) // Test for first existence of a child
+                    if (node.quadrants[i] != null)
                     {
-                        hasChildren = true;
-                        break;
+                        hasChildren = true; // Child exists
+                        break;             // Stop here
                     }
                 }
+
                 if (hasChildren) // Internal node
                 {
-                    for (int i = (int)Math.Pow(2, dimension) - 1; i >= 0; i--) // For each child to the deleting node
+                    node.p = FindLeaf(ref node); // Replace point value with leaf node, and snip off the replacing node
+                    
+                    // Check if any of the children of the replacement are in the incorrect quadrants, if they are, the entire subtree
+                    // needs to be reinserted
+
+                    List<Point> points = new List<Point>(); // List of points to be added in the case of violating subtrees
+
+                    for (int i = 0; i < Math.Pow(2, dimension); i++) // For each child index of deleting node,
                     {
+                        // Compare root and child to generate a quadrantIndex, and compare to i
+                        int quadrantIndex = 0;
+                        for (int j = 0; j < dimension; j++) // Compare each dimension
+                        {
+                            if (point.Get(j) > node.p.Get(j)) // Point coord is greater
+                                quadrantIndex += (int)Math.Pow(2, i); // Get quadrant index 
+
+                            // Continue with quadrantIndex, no modification
+                        }
+
+                        if (i != quadrantIndex) // Point is in wrong quadrant
+                        {
+                            InsertSubtree(ref node.quadrants[i], points); // Recurse down subtree with pointList
+                        }
 
                     }
-                    return false; // Doesnt have children?
+                    foreach (Point p in points) // Insert violating points
+                    {
+                        Insert(p); // Re-insert
+                    }
+                    return true; // Successful deletion
                 }
                 else // Leaf Node (No Children)
                 {
@@ -212,7 +237,57 @@ namespace PointQuadTree
                     // Continue with quadrantIndex, no modification
                 }
                 return Delete(ref node.quadrants[quadrantIndex], point); // Select Quadrant
-            }     
+            }
+        }
+
+        // Recursively inserts a subtree back into the QuadTree, starting from a leaf and working back up to the root. The node point
+        // is first added to a list of running re-inserts to be used after return. The point is added, and then snipped off.
+        private void InsertSubtree(ref Node node, List<Point> pointList)
+        {
+            if (node == null)
+            {
+                return;
+            }
+            else
+            {
+                // Recursively insert all children first
+                for (int i = 0; i < Math.Pow(2, dimension); i++)
+                {
+                    InsertSubtree(ref node.quadrants[i], pointList); // Recurse
+                }
+
+                // Insert current node and set to null
+                Point p = node.p;
+                pointList.Add(p); // Add to pointList
+                node = null; // Snip off node
+            }
+        }
+
+        // Finds leaf node to replace deleting node with
+        private Point FindLeaf(ref Node node)
+        {
+            if (node == null) throw new ArgumentException("Deleting node is already null!");
+            else // Recurse until leaf node is found
+            {
+                bool hasChildren = false;
+                for (int i = 0; i < Math.Pow(2, dimension); i++) // Look at each child
+                {
+                    if (node.quadrants[i] != null) // If a child exists,
+                    {
+                        Point point = FindLeaf(ref node.quadrants[i]); // recurse to existing child
+                        hasChildren = true;
+                        return point;
+                    }
+                }
+                if (!hasChildren) // leaf node
+                {
+                    Point replacement = node.p;
+                    node = null; // Set leaf to null
+                    return replacement; // return leaf node value
+                }
+                else
+                    return null; // Something went terribly wrong?
+            }
         }
 
         // Public Contains
@@ -252,7 +327,7 @@ namespace PointQuadTree
             if (root == null) // Empty tree
                 Console.WriteLine("Empty tree.");
             else
-                PrintQuadTree(root, 0,0); // Print tree recursively from root
+                PrintQuadTree(root, 0, 0); // Print tree recursively from root
         }
 
         // Private Recursive Print
@@ -264,22 +339,22 @@ namespace PointQuadTree
                 // Traverse Right (Half) Subtree
                 for (int i = node.quadrants.Length - 1; i >= (node.quadrants.Length / 2); i--)
                 {
-                    PrintQuadTree(node.quadrants[i], indent + 15,i);
+                    PrintQuadTree(node.quadrants[i], indent + 15, i);
                 }
 
-                if(wheredid >= (Math.Pow(2, dimension) / 2)) // Right subtree color
+                if (wheredid >= (Math.Pow(2, dimension) / 2)) // Right subtree color
                     Console.ForegroundColor = ConsoleColor.Green;
 
                 else // Left subtree color
                     Console.ForegroundColor = ConsoleColor.Red;
-                
+
                 // Print Inorder
                 Console.WriteLine("".PadLeft(indent) + node.p.ToString());
 
                 // Traverse Left (Half) Subtree
                 for (int j = (node.quadrants.Length / 2) - 1; j >= 0; j--)
                 {
-                    PrintQuadTree(node.quadrants[j], indent + 15,j);  
+                    PrintQuadTree(node.quadrants[j], indent + 15, j);
                 }
             }
         }
