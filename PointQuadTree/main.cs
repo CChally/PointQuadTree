@@ -12,57 +12,87 @@ namespace Driver
     {
         static void Main()
         {
-            PointQuadTree PQ = new PointQuadTree(2);    // Init with specified dimension (1D, 2D, 3D ... ND)
+            int dimension = 2; // Set dimension
+
+            PointQuadTree PQ = new PointQuadTree(dimension);    // Init with specified dimension (1D, 2D, 3D ... ND)
             Point p;
+            List<Point> pointSet = new List<Point>(); // Point storage
             Random rand = new Random();     // For generating random point values
 
+            Point root = new Point(dimension); // Random root so I can test deleting the root later in the code
+            for (int i = 0; i < dimension; i++)
+            {
+                root.Set(i, rand.Next(-50, 50)); // Just so I can reference it later
+            }
+            PQ.Insert(root);
 
             // Create 10 random points
-
-            var delete = new Point(2);
-            delete.Set(0, -20);
-            delete.Set(1, 20);
-
-            PQ.Insert(delete);
-
             for (int i = 0; i < 10; i++)   
             {
-                p = new Point(2);           // Zero Point
+                p = new Point(dimension);           // Zero Point
 
                 for (int j = 0; j < PQ.dimension; j++)  // Assign values to zero point
                     p.Set(j, rand.Next(-50,50));   // Lower bound 0, upper bound of 100
-                
+
                 // Insert into PointQuad
+                pointSet.Add(p);
                 PQ.Insert(p);   
             }
 
-            p = new Point(2);
-            p.Set(0, -50);
-            p.Set(1, 0);
-        
-            var d = new Point(2);
-            d.Set(0, 50);
-            d.Set(1, 50);
+            // Test leaf node deletions
+            // Give min and max points to appear on the far right and far left in console
 
-           
-            PQ.Insert(d); // farthest right
-            PQ.Insert(p); // farthest left
+            Point min = new Point(dimension);
+            Point max = new Point(dimension);
+
+            for(int i = 0; i<dimension; i++)
+            {
+                min.Set(i, -50); // Set mins
+                max.Set(i, 50); // Set maxs
+            }
+            Console.WriteLine($"Max : {max.ToString()}");
+            Console.WriteLine($"Min : {min.ToString()}");
+
+            PQ.Insert(min);
+            PQ.Insert(max);
+
+            Console.WriteLine($"Contains min: {PQ.Contains(min)}");
+            Console.WriteLine($"Contains max: {PQ.Contains(max)}");
 
             PQ.PrintQuadTree();
+            Console.ResetColor();
             Console.WriteLine("----------------------------------------------------------------------");
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine(PQ.Contains(p));
-            Console.WriteLine(PQ.Contains(d));
 
-            PQ.Delete(p);
-            PQ.Delete(d);
-            PQ.Delete(delete);
+            Console.WriteLine();
+            Console.WriteLine("Deleting min and max.... (Leaf Nodes)");
+            // Delete min and max
+            PQ.Delete(min);
+            PQ.Delete(max);
+            Console.WriteLine($"Contains min: {PQ.Contains(min)}");
+            Console.WriteLine($"Contains max: {PQ.Contains(max)} \n");
+            PQ.PrintQuadTree(); // Print after delete
+            Console.ResetColor();
+            Console.WriteLine("---------------------------------------------------------------------- \n");
 
+            // Deleting 2 random nodes
+            Console.WriteLine("Deleting 2 random nodes from the Point Set");
+            for (int i = 0; i < 2; i++)
+            {
+                Point randomDelete = pointSet[rand.Next(0, pointSet.Count - 1)];
+                Console.WriteLine($"Deleting : {randomDelete.ToString()}");
+                PQ.Delete(randomDelete);
+                pointSet.Remove(randomDelete); // Remove from pointset
+            }
+            Console.WriteLine();
+            PQ.PrintQuadTree(); // Print after delete
+            Console.ResetColor();
+            Console.WriteLine("---------------------------------------------------------------------- \n");
+
+            // Delete root
+            Console.WriteLine("Deleting the root...");
+            PQ.Delete(root); // Delete root
+            Console.WriteLine();
             PQ.PrintQuadTree();
-            Console.WriteLine(PQ.Contains(p));
-            Console.WriteLine(PQ.Contains(d));
-
             Console.ReadKey();
         }
     }
